@@ -1,0 +1,135 @@
+#!/usr/bin/env node
+require("colors");
+var dl = require("..");
+var getCatalog = require("../dl/getCatalog");
+var getContent = require("../dl/getContent");
+var initPb = require("../lib/progressBar");
+var program = require("commander");
+var readline = require("readline-sync");
+const pkg = require("../package.json");
+
+program
+  .usage("<options> [value]")
+  .option("-b, --bid <bid(s)>", "download books by bookID")
+  .option("")
+  .option("-s, --setting", "open options menu")
+  .option("")
+  .version(pkg.version, "-v, --version")
+  .parse(process.argv);
+
+let config = dl.getConfig();
+
+async function handleArgv() {
+  if (program.bid) {
+    let bid = program.bid;
+    if (config.download.dlDir == null) {
+      console.log("\nYou must set the download path first!".red);
+      console.log("\tTry" + " 99dl -s".yellow + " to set it.\n");
+      return;
+    }
+    var opt = {};
+    opt["timeout"] = config.download.timeout;
+    opt["proxy"] = config.download.proxy;
+    var catalog = await getCatalog(bid, opt);
+    if (catalog == null) {
+      console.log("\nDownload failed, because the catalog is empty!".red);
+    } else {
+      var pb = initPb(catalog[1], catalog.length - 1);
+      console.log("");
+      pb.tick();
+      getContent(catalog, opt, config.download, pb);
+    }
+  } else if (program.setting) {
+    let index;
+    do {
+      console.clear();
+      console.log("99dl Settings".green);
+      let settings = [
+        "Download path\t".yellow +
+          (config.download.dlDir
+            ? config.download.dlDir
+            : "Null, please set one".bgRed),
+        "Download thread\t".yellow + config.download.thread,
+        "Download timeout\t".yellow + config.download.timeout,
+        "Proxy\t\t".yellow +
+          (typeof config.download.proxy == "string" &&
+          config.download.proxy.length > 0
+            ? config.download.proxy
+            : "Disable")
+      ];
+      index = readline.keyInSelect(settings, "Press a key:", {
+        cancel: "Exit".bgMagenta
+      });
+      console.log();
+
+      switch (index) {
+        case 0:
+          config.download.dlDir = readline.questionPath(
+            "Please input a download path:\n".yellow,
+            {
+              isDirectory: true,
+              exists: null,
+              cd: false
+            }
+          );
+          break;
+
+        case 1:
+          config.download.thread = getStrictIntInput(
+            "Please input the number of download thread:".yellow +
+              " [1-10, default is 3]\n",
+            {
+              defaultInput: 3
+            },
+            input => input >= 1 && input <= 10,
+            "It must be between 1 and 10."
+          );
+          break;
+
+        case 2: // 下载超时
+          config.download.timeout = getStrictIntInput(
+            "Please input the millisecond of download timeout:".yellow +
+              " [default is 3000]\n",
+            {
+              defaultInput: 3000
+            },
+            input => input > 1000,
+            "It should be greater than 1000."
+          );
+          break;
+
+        case 3: // 代理设置
+          config.download.proxy = readline.question(
+            "Please input your HTTP/SOCKS proxy like:\n".yellow +
+              "  <Protocol>://[user:passwd@]<IP>:<Port>\n" +
+              "Such as\n".yellow +
+              "  http://127.0.0.1:1080\n" +
+              "  socks://user:passwd@127.0.0.1:1080\n" +
+              "If you want to DISABLE it, just input nothing.\n".yellow,
+            {
+              limitMessage: "\nIncorrect format, please re-input.\n".bgRed,
+              limit: /(^(http|socks):\/\/(.+@)?((25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))):(([1-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))$)|(^$)/
+            }
+          );
+          break;
+      }
+      dl.writeConfig(config);
+    } while (index !== -1);
+
+    console.log("Exit".green);
+  } else {
+    console.error("\nMissing arguments!".red);
+    program.outputHelp();
+  }
+}
+
+function getStrictIntInput(question, option, limit, limitReply) {
+  let result = readline.questionInt(question, option);
+  while (!limit(result)) {
+    console.log("\n" + limitReply.bgRed + "\n");
+    result = readline.questionInt(question, option);
+  }
+  return result;
+}
+
+handleArgv();
