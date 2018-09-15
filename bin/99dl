@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 require("colors");
+var SocksProxyAgent = require("socks-proxy-agent");
 var dl = require("..");
 var getCatalog = require("../dl/getCatalog");
 var getContent = require("../dl/getContent");
@@ -28,7 +29,13 @@ async function handleArgv() {
     }
     var opt = {};
     opt["timeout"] = config.download.timeout;
-    opt["proxy"] = config.download.proxy;
+    var proxy = config.download.proxy;
+    if (proxy.includes("http://")) {
+      opt["proxy"] = proxy;
+    } else if (proxy.includes("socks://")) {
+      var agent = new SocksProxyAgent(proxy);
+      opt["agent"] = agent;
+    }
     var catalog = await getCatalog(bid, opt);
     if (catalog == null) {
       console.log("\nDownload failed, because the catalog is empty!".red);
