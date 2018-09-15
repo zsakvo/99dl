@@ -18,7 +18,7 @@ class dl {
         JSON.stringify({
           download: {
             thread: 3,
-            timeout: 3000,
+            timeout: 2000,
             tmpDir: tmpDir
           }
         })
