@@ -1,11 +1,14 @@
 var fs = require("fs-extra");
-var sleep = require("sleep");
 var op = require("../lib/outPut");
 var path = require("path");
 var rp = require("request-promise");
 var writeContent = require("../lib/writeContent");
 var initPb = require("../lib/progressBar");
 require("colors");
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 let mapLimit = (list, limit, asyncHandle) => {
   let recursion = arr => {
@@ -32,7 +35,7 @@ var limit;
 var failed = [];
 
 async function tryAgain(catalog, opt) {
-  sleep.sleep(1);
+  await sleep(700);
   failed = [];
   for (let i = 0; i < catalog.length; i++) {
     let curItem = catalog[i];
@@ -69,8 +72,8 @@ function get(catalog, opt, config) {
   if (catalogs == null) catalogs = catalog;
   if (tmpDir == null) tmpDir = path.join(config.tmpDir, bid);
   if (dlDir == null) dlDir = config.dlDir;
-  if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir);
-  if (!fs.existsSync(dlDir)) fs.mkdirpSync(dlDir);
+  if (!fs.existsSync(tmpDir)) fs.mkdirsSync(tmpDir);
+  if (!fs.existsSync(dlDir)) fs.mkdirsSync(dlDir);
   if (limit == null) limit = config.thread;
   if (!catalog[0].includes("http")) catalog.splice(0, 2);
   mapLimit(catalog, limit, curItem => {

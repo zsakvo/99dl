@@ -10,8 +10,7 @@ const tmpDir = path.join(configFileDir, "tmp");
 
 class dl {
   static initConfig() {
-    if (!fs.existsSync(configFileDir)) fs.mkdirSync(configFileDir);
-    if (!fs.existsSync(configFileDir)) fs.mkdirSync(configFileDir);
+    if (!fs.existsSync(configFileDir)) fs.mkdirsSync(configFileDir);
     if (!fs.existsSync(configFile))
       fs.writeFileSync(
         configFile,
