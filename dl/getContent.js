@@ -4,6 +4,7 @@ var op = require("../lib/outPut");
 var path = require("path");
 var rp = require("request-promise");
 var writeContent = require("../lib/writeContent");
+var initPb = require("../lib/progressBar");
 require("colors");
 
 let mapLimit = (list, limit, asyncHandle) => {
@@ -58,12 +59,14 @@ async function tryAgain(catalog, opt) {
   }
 }
 
-function get(catalog, opt, config, progressBar) {
+function get(catalog, opt, config) {
+  bar = initPb(catalog[1], catalog.length - 1);
+  console.log("");
+  bar.tick();
   failed = [];
   if (bookName == null) bookName = catalog[1];
   if (bid == null) bid = catalog[0];
   if (catalogs == null) catalogs = catalog;
-  if (bar == null) bar = progressBar;
   if (tmpDir == null) tmpDir = path.join(config.tmpDir, bid);
   if (dlDir == null) dlDir = config.dlDir;
   if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir);

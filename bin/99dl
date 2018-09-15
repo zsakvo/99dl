@@ -3,7 +3,6 @@ require("colors");
 var dl = require("..");
 var getCatalog = require("../dl/getCatalog");
 var getContent = require("../dl/getContent");
-var initPb = require("../lib/progressBar");
 var program = require("commander");
 var readline = require("readline-sync");
 const pkg = require("../package.json");
@@ -34,10 +33,7 @@ async function handleArgv() {
     if (catalog == null) {
       console.log("\nDownload failed, because the catalog is empty!".red);
     } else {
-      var pb = initPb(catalog[1], catalog.length - 1);
-      console.log("");
-      pb.tick();
-      getContent(catalog, opt, config.download, pb);
+      getContent(catalog, opt, config.download);
     }
   } else if (program.setting) {
     let index;
