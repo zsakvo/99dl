@@ -11,7 +11,7 @@ async function getCatalog(bid, opt) {
       var catalog = parse(res);
       for (var i = 0; i < catalog.length; i++) {
         var contentUrl;
-        if (i === 0) {
+        if (i < 3) {
           contentUrl = catalog[i];
         } else {
           contentUrl = "http://www.99lib.net" + catalog[i];

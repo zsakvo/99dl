@@ -18,7 +18,8 @@ class dl {
           download: {
             thread: 3,
             timeout: 2000,
-            tmpDir: tmpDir
+            tmpDir: tmpDir,
+            downloadType: "txt"
           }
         })
       );
@@ -30,6 +31,7 @@ class dl {
     if (!config.download.thread) config.download.thread = 3;
     if (!config.download.timeout) config.download.timeout = 3000;
     if (!config.download.tmpDir) config.download.tmpDir = tmpDir;
+    if (!config.download.downloadTpye) config.download.downloadType = "txt";
     return config;
   }
 

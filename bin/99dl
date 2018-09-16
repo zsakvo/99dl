@@ -3,14 +3,15 @@ require("colors");
 var SocksProxyAgent = require("socks-proxy-agent");
 var dl = require("..");
 var getCatalog = require("../dl/getCatalog");
-var getContent = require("../dl/getContent");
+var getTxt = require("../dl/getTxt");
+var getEpub = require("../dl/getEpub");
 var program = require("commander");
 var readline = require("readline-sync");
 const pkg = require("../package.json");
 
 program
   .usage("<options> [value]")
-  .option("-b, --bid <bid(s)>", "download books by bookID")
+  .option("-d, --download <bid(s)>", "download books by bookID")
   .option("")
   .option("-s, --setting", "open options menu")
   .option("")
@@ -18,10 +19,26 @@ program
   .parse(process.argv);
 
 let config = dl.getConfig();
+var reg = new RegExp("^[0-9]*$");
 
 async function handleArgv() {
-  if (program.bid) {
-    let bid = program.bid;
+  if (program.download) {
+    var downloadType;
+    let bid;
+    if (
+      program.download.split(",")[0] === "epub" ||
+      program.download.split(",")[0] === "txt"
+    ) {
+      downloadType = program.download.split(",")[0];
+      bid = program.download.split(",")[1];
+    } else {
+      downloadType = config.download.downloadType;
+      bid = program.download.split(",")[0];
+    }
+    if (!reg.test(bid)) {
+      console.log("\nYour book ID is incorrect!\n".red);
+      return;
+    }
     if (config.download.dlDir == null) {
       console.log("\nYou must set the download path first!".red);
       console.log("\tTry" + " 99dl -s".yellow + " to set it.\n");
@@ -40,7 +57,11 @@ async function handleArgv() {
     if (catalog == null) {
       console.log("\nDownload failed, because the catalog is empty!\n".red);
     } else {
-      getContent(catalog, opt, config.download);
+      if (downloadType === "txt") {
+        getTxt(catalog, opt, config.download);
+      } else {
+        getEpub(catalog, opt, config.download);
+      }
     }
   } else if (program.setting) {
     let index;

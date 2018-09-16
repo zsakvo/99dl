@@ -26,6 +26,7 @@ let mapLimit = (list, limit, asyncHandle) => {
 };
 
 var bookName;
+var author;
 var catalogs;
 var bar;
 var bid;
@@ -57,17 +58,18 @@ async function tryAgain(catalog, opt) {
   if (failed.length != 0) {
     tryAgain(failed, opt);
   } else {
-    op(bookName, catalogs, tmpDir, dlDir);
+    op(bookName + " - " + author, catalogs, tmpDir, dlDir);
     console.log("download success!\n".green);
   }
 }
 
 function get(catalog, opt, config) {
-  bar = initPb(catalog[1], catalog.length - 1);
+  bar = initPb(catalog[1], catalog.length - 3);
   console.log("");
   bar.tick();
   failed = [];
   if (bookName == null) bookName = catalog[1];
+  if (author == null) author = catalog[2];
   if (bid == null) bid = catalog[0];
   if (catalogs == null) catalogs = catalog;
   if (tmpDir == null) tmpDir = path.join(config.tmpDir, bid);
@@ -75,7 +77,7 @@ function get(catalog, opt, config) {
   if (!fs.existsSync(tmpDir)) fs.mkdirsSync(tmpDir);
   if (!fs.existsSync(dlDir)) fs.mkdirsSync(dlDir);
   if (limit == null) limit = config.thread;
-  if (!catalog[0].includes("http")) catalog.splice(0, 2);
+  if (!catalog[0].includes("http")) catalog.splice(0, 4);
   mapLimit(catalog, limit, curItem => {
     let tmpPath = path.join(
       tmpDir,
@@ -95,7 +97,7 @@ function get(catalog, opt, config) {
     if (failed.length != 0) {
       tryAgain(failed, opt);
     } else {
-      op(bookName, catalog, tmpDir, dlDir);
+      op(bookName + " - " + author, catalog, tmpDir, dlDir);
       console.log("download success!\n".green);
     }
   });
