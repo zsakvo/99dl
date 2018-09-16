@@ -38,7 +38,7 @@ async function handleArgv() {
     }
     var catalog = await getCatalog(bid, opt);
     if (catalog == null) {
-      console.log("\nDownload failed, because the catalog is empty!".red);
+      console.log("\nDownload failed, because the catalog is empty!\n".red);
     } else {
       getContent(catalog, opt, config.download);
     }
@@ -118,8 +118,7 @@ async function handleArgv() {
       }
       dl.writeConfig(config);
     } while (index !== -1);
-
-    console.log("Exit".green);
+    console.log("Exit\n".green);
   } else {
     console.error("\nMissing arguments!".red);
     program.outputHelp();
