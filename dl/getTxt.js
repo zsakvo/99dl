@@ -84,7 +84,6 @@ function get(catalog, opt, config) {
       curItem.substring(curItem.indexOf(bid + "/") + bid.length + 1)
     );
     opt["uri"] = curItem;
-    opt["timeout"] = 700;
     return rp(opt)
       .then(res => {
         writeContent(tmpPath, res);
