@@ -17,6 +17,11 @@ var limit;
 var dlDir;
 var tmpDir;
 var failed = [];
+var catalogs;
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 let mapLimit = (list, limit, asyncHandle) => {
   let recursion = arr => {
@@ -66,6 +71,7 @@ function get(catalog, opt, config) {
   console.log("");
   bar.tick();
   if (bid == null) bid = catalog[0];
+  if (catalogs == null) catalogs = catalog;
   if (bookName == null) bookName = catalog[1];
   if (author == null) author = catalog[2];
   if (cover == null) cover = catalog[3];

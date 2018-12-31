@@ -46,16 +46,20 @@ async function handleArgv() {
     }
     var opt = {};
     opt["timeout"] = config.download.timeout;
-    var proxy = config.download.proxy;
-    if (proxy.includes("http://")) {
-      opt["proxy"] = proxy;
-    } else if (proxy.includes("socks://")) {
-      var agent = new SocksProxyAgent(proxy);
-      opt["agent"] = agent;
+    if (config.download.proxy != null) {
+      var proxy = config.download.proxy;
+      if (proxy.includes("http://")) {
+        opt["proxy"] = proxy;
+      } else if (proxy.includes("socks://")) {
+        var agent = new SocksProxyAgent(proxy);
+        opt["agent"] = agent;
+      }
     }
+
     var catalog = await getCatalog(bid, opt);
     if (catalog == null) {
       console.log("\nDownload failed, because the catalog is empty!\n".red);
+      process.exit();
     } else {
       if (downloadType === "txt") {
         getTxt(catalog, opt, config.download);
