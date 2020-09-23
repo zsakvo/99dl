@@ -20,11 +20,11 @@ var failed = [];
 var catalogs;
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 let mapLimit = (list, limit, asyncHandle) => {
-  let recursion = arr => {
+  let recursion = (arr) => {
     return asyncHandle(arr.shift()).then(() => {
       if (arr.length !== 0) return recursion(arr);
     });
@@ -50,11 +50,11 @@ async function tryAgain(catalog, opt) {
       curItem.substring(curItem.indexOf(bid + "/") + bid.length + 1)
     );
     await rp(opt)
-      .then(res => {
+      .then((res) => {
         writeContent(tmpPath, res);
         bar.tick();
       })
-      .catch(e => {
+      .catch((e) => {
         failed.push(opt.uri);
       });
   }
@@ -74,7 +74,7 @@ function get(catalog, opt, config) {
   if (catalogs == null) catalogs = catalog;
   if (bookName == null) bookName = catalog[1];
   if (author == null) author = catalog[2];
-  if (cover == null) cover = catalog[3];
+  if (cover == null) cover = "https:" + catalog[3];
   if (dlDir == null) dlDir = config.dlDir;
   if (limit == null) limit = config.thread;
   if (tmpDir == null) tmpDir = path.join(config.tmpDir, bid);
@@ -83,23 +83,23 @@ function get(catalog, opt, config) {
   if (!catalog[0].includes("http")) catalog.splice(0, 4);
   opt["uri"] = cover;
   var writeStream = fs.createWriteStream(path.join(tmpDir, "cover.jpg"), {
-    autoClose: true
+    autoClose: true,
   });
   rp(opt).pipe(writeStream);
-  writeStream.on("finish", function() {
+  writeStream.on("finish", function () {
     bar.tick();
-    mapLimit(catalog, limit, curItem => {
+    mapLimit(catalog, limit, (curItem) => {
       let tmpPath = path.join(
         tmpDir,
         curItem.substring(curItem.indexOf(bid + "/") + bid.length + 1)
       );
       opt["uri"] = curItem;
       return rp(opt)
-        .then(res => {
+        .then((res) => {
           writeContent(tmpPath, res);
           bar.tick();
         })
-        .catch(e => {
+        .catch((e) => {
           failed.push(curItem);
         });
     }).then(() => {
