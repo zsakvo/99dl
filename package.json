@@ -1,6 +1,6 @@
 {
   "name": "99dl",
-  "version": "1.0.2",
+  "version": "1.0.22",
   "description": "Export books from 99csw.com",
   "main": "index.js",
   "bin": {

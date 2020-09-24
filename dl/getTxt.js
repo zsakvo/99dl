@@ -88,7 +88,6 @@ function get(catalog, opt, config) {
     opt["uri"] = curItem;
     return rp(opt)
       .then((res) => {
-        console.log(res.length);
         writeContent(tmpPath, res);
         bar.tick();
       })
