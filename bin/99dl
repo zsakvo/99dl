@@ -12,9 +12,7 @@ const pkg = require("../package.json");
 program
   .usage("<options> [value]")
   .option("-d, --download <bid(s)>", "download books by bookID")
-  .option("")
   .option("-s, --setting", "open options menu")
-  .option("")
   .version(pkg.version, "-v, --version")
   .parse(process.argv);
 
@@ -83,10 +81,10 @@ async function handleArgv() {
           (typeof config.download.proxy == "string" &&
           config.download.proxy.length > 0
             ? config.download.proxy
-            : "Disable")
+            : "Disable"),
       ];
       index = readline.keyInSelect(settings, "Press a key:", {
-        cancel: "Exit".bgMagenta
+        cancel: "Exit".bgMagenta,
       });
       console.log();
 
@@ -97,7 +95,7 @@ async function handleArgv() {
             {
               isDirectory: true,
               exists: null,
-              cd: false
+              cd: false,
             }
           );
           break;
@@ -107,9 +105,9 @@ async function handleArgv() {
             "Please input the number of download thread:".yellow +
               " [1-10, default is 3]\n",
             {
-              defaultInput: 3
+              defaultInput: 3,
             },
-            input => input >= 1 && input <= 10,
+            (input) => input >= 1 && input <= 10,
             "It must be between 1 and 10."
           );
           break;
@@ -119,9 +117,9 @@ async function handleArgv() {
             "Please input the millisecond of download timeout:".yellow +
               " [default is 3000]\n",
             {
-              defaultInput: 3000
+              defaultInput: 3000,
             },
-            input => input > 1000,
+            (input) => input > 1000,
             "It should be greater than 1000."
           );
           break;
@@ -136,7 +134,7 @@ async function handleArgv() {
               "If you want to DISABLE it, just input nothing.\n".yellow,
             {
               limitMessage: "\nIncorrect format, please re-input.\n".bgRed,
-              limit: /(^(http|socks):\/\/(.+@)?((25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))):(([1-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))$)|(^$)/
+              limit: /(^(http|socks):\/\/(.+@)?((25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))):(([1-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))$)|(^$)/,
             }
           );
           break;
