@@ -7,11 +7,11 @@ var initPb = require("../lib/progressBar");
 require("colors");
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 let mapLimit = (list, limit, asyncHandle) => {
-  let recursion = arr => {
+  let recursion = (arr) => {
     return asyncHandle(arr.shift()).then(() => {
       if (arr.length !== 0) return recursion(arr);
     });
@@ -47,11 +47,11 @@ async function tryAgain(catalog, opt) {
       curItem.substring(curItem.indexOf(bid + "/") + bid.length + 1)
     );
     await rp(opt)
-      .then(res => {
+      .then((res) => {
         writeContent(tmpPath, res);
         bar.tick();
       })
-      .catch(e => {
+      .catch((e) => {
         failed.push(opt.uri);
       });
   }
@@ -78,19 +78,24 @@ function get(catalog, opt, config) {
   if (!fs.existsSync(dlDir)) fs.mkdirsSync(dlDir);
   if (limit == null) limit = config.thread;
   if (!catalog[0].includes("http")) catalog.splice(0, 4);
-  mapLimit(catalog, limit, curItem => {
-    let tmpPath = path.join(
-      tmpDir,
-      curItem.substring(curItem.indexOf(bid + "/") + bid.length + 1)
-    );
+  mapLimit(catalog, limit, (curItem) => {
+    let tmpPath = curItem
+      ? path.join(
+          tmpDir,
+          curItem.substring(curItem.indexOf(bid + "/") + bid.length + 1)
+        )
+      : null;
     opt["uri"] = curItem;
     return rp(opt)
-      .then(res => {
+      .then((res) => {
+        console.log(res.length);
         writeContent(tmpPath, res);
         bar.tick();
       })
-      .catch(e => {
-        failed.push(curItem);
+      .catch((e) => {
+        if (tmpPath !== null) {
+          failed.push(curItem);
+        }
       });
   }).then(() => {
     if (failed.length != 0) {
