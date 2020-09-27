@@ -11,7 +11,7 @@ const pkg = require("../package.json");
 
 program
   .usage("<options> [value]")
-  .option("-d, --download <bid(s)>", "download books by bookID")
+  .option("-d, --download <bid>", "download books by bookID")
   .option("-s, --setting", "open options menu")
   .version(pkg.version, "-v, --version")
   .parse(process.argv);
