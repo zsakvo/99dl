@@ -2,6 +2,7 @@
 require("colors");
 var SocksProxyAgent = require("socks-proxy-agent");
 var dl = require("..");
+var searchBook = require("../http/searchBooks");
 var getCatalog = require("../dl/getCatalog");
 var getTxt = require("../dl/getTxt");
 var getEpub = require("../dl/getEpub");
@@ -12,6 +13,7 @@ const pkg = require("../package.json");
 program
   .usage("<options> [value]")
   .option("-d, --download <bid(s)>", "download books by bookID")
+  .option("-f, --find <str>", "search books by str")
   .option("-s, --setting", "open options menu")
   .version(pkg.version, "-v, --version")
   .parse(process.argv);
@@ -19,7 +21,30 @@ program
 let config = dl.getConfig();
 var reg = new RegExp("^[0-9]*$");
 
+String.prototype.gblen = function () {
+  var len = 0;
+  for (var i = 0; i < this.length; i++) {
+    if (this.charCodeAt(i) > 127 || this.charCodeAt(i) == 94) {
+      len += 2;
+    } else {
+      len++;
+    }
+  }
+  return len;
+};
+
 async function handleArgv() {
+  var opt = {};
+  opt["timeout"] = config.download.timeout;
+  if (config.download.proxy != null) {
+    var proxy = config.download.proxy;
+    if (proxy.includes("http://")) {
+      opt["proxy"] = proxy;
+    } else if (proxy.includes("socks://")) {
+      var agent = new SocksProxyAgent(proxy);
+      opt["agent"] = agent;
+    }
+  }
   if (program.download) {
     var downloadType;
     let bid;
@@ -42,17 +67,6 @@ async function handleArgv() {
       console.log("\tTry" + " 99dl -s".yellow + " to set it.\n");
       return;
     }
-    var opt = {};
-    opt["timeout"] = config.download.timeout;
-    if (config.download.proxy != null) {
-      var proxy = config.download.proxy;
-      if (proxy.includes("http://")) {
-        opt["proxy"] = proxy;
-      } else if (proxy.includes("socks://")) {
-        var agent = new SocksProxyAgent(proxy);
-        opt["agent"] = agent;
-      }
-    }
 
     var catalog = await getCatalog(bid, opt);
     if (catalog == null) {
@@ -64,6 +78,12 @@ async function handleArgv() {
       } else {
         getEpub(catalog, opt, config.download);
       }
+    }
+  } else if (program.find) {
+    if (program.find.gblen() >= 4) {
+      searchBook(program.find, 1, opt);
+    } else {
+      console.log("搜索内容需要至少 2 个汉字或 4 个字母");
     }
   } else if (program.setting) {
     let index;

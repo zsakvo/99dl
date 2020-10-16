@@ -13,11 +13,13 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "appdata-path": "^1.0.0",
+    "axios": "^0.20.0",
     "cheerio": "^1.0.0-rc.3",
     "colors": "^1.4.0",
     "commander": "^6.1.0",
     "epub-gen": "^0.1.0",
     "fs-extra": "^9.0.1",
+    "inquirer": "^7.3.3",
     "progress": "^2.0.3",
     "readline-sync": "^1.4.10",
     "request": "^2.88.2",
