@@ -3,7 +3,7 @@ require("colors");
 var SocksProxyAgent = require("socks-proxy-agent");
 var dl = require("..");
 var searchBook = require("../http/searchBooks");
-var getCatalog = require("../dl/getCatalog");
+var getCatalog = require("../http/getCatalog");
 var getTxt = require("../dl/getTxt");
 var getEpub = require("../dl/getEpub");
 var program = require("commander");

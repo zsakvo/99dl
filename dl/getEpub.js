@@ -5,7 +5,7 @@ var writeContent = require("../lib/writeEpubContent");
 var initPb = require("../lib/progressBar");
 var op = require("../lib/outputEpub");
 // var initPb = require("../lib/progressBar");
-var gc = require("../lib/getCover");
+var gc = require("../http/getCover");
 
 var bid;
 var bookName;

@@ -1,7 +1,7 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const inquirer = require("inquirer");
-const getCatalog = require("../dl/getCatalog");
+const getCatalog = require("./getCatalog");
 const getTxt = require("../dl/getTxt");
 var dl = require("..");
 
