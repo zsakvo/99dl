@@ -13,7 +13,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "appdata-path": "^1.0.0",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.3",
     "colors": "^1.4.0",
     "commander": "^6.1.0",
